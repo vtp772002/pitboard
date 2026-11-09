@@ -84,7 +84,6 @@ struct AntigravitySettings: View {
         }
         .formStyle(.grouped)
         .padding(.top, 8)
-        .task { refreshStaleProfiles() }
     }
 
     private var validDraft: Bool { AntigravityTerminal.valid(draft) }
@@ -186,18 +185,6 @@ struct AntigravitySettings: View {
         }
         .disabled(refreshing.contains(profile))
         .accessibilityIdentifier("antigravity.quota.refresh.\(profile)")
-    }
-
-    private func refreshStaleProfiles() {
-        let now = Date()
-        for profile in profiles {
-            if let snapshot = quotaByProfile[profile],
-                now.timeIntervalSince(snapshot.fetchedAt) < 300
-            {
-                continue
-            }
-            refresh(profile)
-        }
     }
 
     private func refresh(_ profile: String) {
@@ -506,7 +493,7 @@ struct AntigravityAccountSection: View {
                 Text(shellIntegrationError).font(.caption).foregroundStyle(.red)
             }
             Toggle(
-                "Auto-select another profile for the next agy run when quota is nearly used",
+                "Auto-select another profile when a quota refresh finds 5% or less remaining",
                 isOn: $autoSwitch
             )
             .font(.caption)
@@ -515,10 +502,9 @@ struct AntigravityAccountSection: View {
             Text("Antigravity CLI")
         } footer: {
             Text(
-                "Switch updates the profile used by your next `agy` command. A running CLI session keeps its current profile; start a new session to use the selected account."
+                "Press Refresh to update quota. Switch updates the profile used by your next `agy` command. A running CLI session keeps its current profile; restart it in the same terminal to use the selected account."
             )
         }
-        .task { await refreshStaleProfiles() }
     }
 
     private func quotaLimits(_ snapshot: AntigravityQuotaSnapshot) -> [LimitRow] {
@@ -580,22 +566,6 @@ struct AntigravityAccountSection: View {
             shellIntegrationError = nil
         } catch {
             shellIntegrationError = error.localizedDescription
-        }
-    }
-
-    private func refreshStaleProfiles() async {
-        let now = Date()
-        for profile in profiles {
-            if let snapshot = quotaByProfile[profile],
-                now.timeIntervalSince(snapshot.fetchedAt) < 300
-            {
-                continue
-            }
-            refresh(profile)
-        }
-        while !Task.isCancelled {
-            do { try await Task.sleep(for: .seconds(300)) } catch { return }
-            for profile in profiles { refresh(profile) }
         }
     }
 

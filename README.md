@@ -117,10 +117,9 @@ Pitboard adds a small managed function to `~/.zshrc` so `agy` launches through `
 selected profile. Run `source ~/.zshrc` in an existing zsh session, or open a new one, to load
 that function. Restart a running `agy` session in the same terminal after switching; it keeps its
 original profile until it exits.
-The app stores profile names and cached quota snapshots. It refreshes stale quota every five
-minutes while the Accounts list is open, or on demand, using Antigravity CLI's read-only `/usage`
-command. Optional auto-selection picks another cached profile when a quota reaches 95% used, for
-the next `agy` command.
+The app stores profile names and cached quota snapshots. Press **Refresh** to update a snapshot
+using Antigravity CLI's read-only `/usage` command. Optional auto-selection picks another cached
+profile when a refresh finds 5% or less remaining, for the next `agy` command.
 Removing a name from the app leaves the `agyw` profile and its login intact; use
 `agyw remove <name> --yes` to delete those. `agyw` supports macOS and Linux; the app integration
 is macOS-only. Neither manages Antigravity IDE or desktop logins.
