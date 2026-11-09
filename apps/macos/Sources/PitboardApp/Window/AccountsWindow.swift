@@ -7,7 +7,12 @@ struct AccountsWindow: View {
     @State private var selection: String?
     @State private var asking: Asking?
     @SceneStorage("inspector") private var inspector = true
+    @AppStorage(DefaultsKey.settingsTab) private var settingsTab = SettingsView.Tab.general
+    @AppStorage(DefaultsKey.antigravityProfiles) private var antigravityProfiles = ""
+    @AppStorage(DefaultsKey.antigravityInspectorProfile) private
+        var antigravityInspectorProfile = ""
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.openSettings) private var openSettings
 
     var body: some View {
         content
@@ -20,8 +25,14 @@ struct AccountsWindow: View {
             .inspector(
                 isPresented: Binding(get: { inspector && listed }, set: { inspector = $0 })
             ) {
-                AccountInspector(item: selected, act: act) { model.send($0) }
-                    .inspectorColumnWidth(min: 240, ideal: 280, max: 360)
+                Group {
+                    if let profile = selectedAntigravityProfile {
+                        AntigravityInspector(profile: profile)
+                    } else {
+                        AccountInspector(item: selected, act: act) { model.send($0) }
+                    }
+                }
+                .inspectorColumnWidth(min: 240, ideal: 280, max: 360)
             }
             .toolbar {
                 ToolbarItemGroup {
@@ -41,6 +52,14 @@ struct AccountsWindow: View {
                     }
                     .help(words.window.addAccountHelp)
                     .accessibilityIdentifier("toolbar.addAccount")
+                    Button {
+                        settingsTab = .antigravity
+                        openSettings()
+                    } label: {
+                        Label("Antigravity CLI", systemImage: "sparkles")
+                    }
+                    .help("Add or switch Antigravity CLI profiles")
+                    .accessibilityIdentifier("toolbar.antigravity")
                 }
                 // Apart from the list's commands, which SwiftUI draws over the inspector too.
                 if #available(macOS 26, *) {
@@ -78,7 +97,7 @@ struct AccountsWindow: View {
 
     private var listed: Bool {
         guard case .list = model.accountsShown else { return false }
-        return !model.sections.isEmpty
+        return !model.sections.isEmpty || !antigravityProfiles.isEmpty
     }
 
     private var selected: AccountItem? {
@@ -88,6 +107,12 @@ struct AccountsWindow: View {
     private var selectedEmail: [String] {
         guard let email = selected?.email, !email.isEmpty else { return [] }
         return [email]
+    }
+
+    private var selectedAntigravityProfile: String? {
+        let profiles = antigravityProfiles.split(separator: "\n").map(String.init)
+        return profiles.contains(antigravityInspectorProfile)
+            ? antigravityInspectorProfile : nil
     }
 
     @ViewBuilder private var content: some View {
@@ -140,6 +165,7 @@ struct AccountsWindow: View {
 
     private var list: some View {
         List(selection: $selection) {
+            AntigravityAccountSection()
             ForEach(model.sections, id: \.id) { section in
                 // A heading per tool once there is more than one, and no section at all
                 // before: a section with no heading still takes a heading's room.
@@ -175,8 +201,20 @@ struct AccountsWindow: View {
         // The inspector shows the account in use until another is chosen.
         .onAppear {
             if selection == nil {
-                selection = model.sections.lazy.flatMap(\.accounts).first(where: \.inUse)?.id
+                if let profile = selectedAntigravityProfile {
+                    selection = "antigravity/\(profile)"
+                } else {
+                    selection =
+                        model.sections.lazy.flatMap(\.accounts).first(where: \.inUse)?.id
+                }
             }
+        }
+        .onChange(of: selection) { _, value in
+            guard let value, value.hasPrefix("antigravity/") else {
+                antigravityInspectorProfile = ""
+                return
+            }
+            antigravityInspectorProfile = String(value.dropFirst("antigravity/".count))
         }
     }
 

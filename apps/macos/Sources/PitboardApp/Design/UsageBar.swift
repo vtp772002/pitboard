@@ -27,7 +27,7 @@ struct UsageBar: View {
     let limit: LimitRow
     let showsPace: Bool
     @ScaledMetric(relativeTo: .callout) private var percentWidth: CGFloat = 38
-    @ScaledMetric(relativeTo: .callout) private var resetsWidth: CGFloat = 110
+    @ScaledMetric(relativeTo: .callout) private var resetsWidth: CGFloat = 120
     @ScaledMetric(relativeTo: .callout) private var paceWidth: CGFloat = 100
 
     var body: some View {
@@ -57,8 +57,10 @@ struct UsageBar: View {
             Text(limit.resets)
                 .foregroundStyle(.secondary)
                 .monospacedDigit()
+                .lineLimit(1)
                 .frame(minWidth: resetsWidth, alignment: .trailing)
                 .gridColumnAlignment(.trailing)
+                .help(limit.resets)
                 .accessibilityHidden(true)
         }
     }

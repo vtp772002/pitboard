@@ -1,6 +1,11 @@
 enum DefaultsKey {
     static let menuBarShows = "menuBarShows"
     static let settingsTab = "settingsTab"
+    static let antigravityProfiles = "antigravityProfiles"
+    static let antigravityQuota = "antigravityQuota"
+    static let antigravityActiveProfile = "antigravityActiveProfile"
+    static let antigravityInspectorProfile = "antigravityInspectorProfile"
+    static let antigravityAutoSwitch = "antigravityAutoSwitch"
 
     /// Where this app kept what the model now keeps in `app.json`, read once to hand over.
     enum Earlier {

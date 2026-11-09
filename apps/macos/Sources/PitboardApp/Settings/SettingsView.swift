@@ -14,6 +14,7 @@ struct SettingsView: View {
         case general
         case limits
         case advanced
+        case antigravity
 
         init(_ section: SettingsSection) {
             switch section {
@@ -29,6 +30,7 @@ struct SettingsView: View {
             case "general", "updates": self = .general
             case "limits": self = .limits
             case "advanced", "renewal", "commandLine": self = .advanced
+            case "antigravity": self = .antigravity
             default: return nil
             }
         }
@@ -52,6 +54,9 @@ struct SettingsView: View {
             AdvancedSettings(model: model, link: commandLineLink)
                 .tabItem { Label(words.settings.advanced, systemImage: Symbol.advanced) }
                 .tag(Tab.advanced)
+            AntigravitySettings()
+                .tabItem { Label("Antigravity CLI", systemImage: "sparkles") }
+                .tag(Tab.antigravity)
         }
         .frame(width: 500)
         .frame(maxHeight: Self.tallestPane)
