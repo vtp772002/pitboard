@@ -9,10 +9,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- The macOS app lists Antigravity CLI profiles in **Accounts**, shows quota and reset date/time
-  in the list and inspector, and refreshes quota on demand. An optional setting selects another
-  profile when a refresh finds 5% or less remaining. **Switch** selects the profile used by the
-  next `agy` shell command through `agyw`.
+- The macOS menu bar menu switches Antigravity CLI profiles. The **Accounts** window shows quota
+  and reset date/time in the list and inspector, and refreshes quota on demand. An optional
+  setting selects another profile when a refresh finds 5% or less remaining. **Switch** selects
+  the profile used by the next `agy` shell command through `agyw`.
 
 - Limits settings and `pitboard watch --weekly-at` set a separate weekly share or turn weekly
   triggers off, while keeping the five-hour share and existing settings.

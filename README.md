@@ -110,8 +110,9 @@ agyw list
 
 `agyw` manages these profiles outside Pitboard. Its profile logins are kept in separate home
 directories as files, not in Pitboard's encrypted vault or the system keychain. In the macOS
-app, the **Accounts** window lists Antigravity profiles beside Claude and Codex. **Switch** selects
-the profile for the next `agy` command without opening a terminal. Select a profile to show its
+app, choose an Antigravity profile from Pitboard's menu bar icon. The **Accounts** window also
+lists Antigravity profiles beside Claude and Codex. **Switch** selects the profile for the next
+`agy` command without opening a terminal. Select a profile to show its
 quota, reset date and time, and refresh control in the inspector on the right. On first use,
 Pitboard adds a small managed function to `~/.zshrc` so `agy` launches through `agyw` using the
 selected profile. Run `source ~/.zshrc` in an existing zsh session, or open a new one, to load

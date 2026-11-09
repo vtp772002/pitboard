@@ -320,7 +320,7 @@ private enum AntigravityTerminal {
     }
 }
 
-private enum AntigravityShellRouting {
+enum AntigravityShellRouting {
     private static let begin = "# BEGIN PITBOARD AGY ROUTING"
     private static let end = "# END PITBOARD AGY ROUTING"
     private static let block = """
