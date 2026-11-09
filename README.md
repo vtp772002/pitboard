@@ -98,6 +98,33 @@ Desktop on macOS, put `desktop/`, as
 [Use Pitboard with Claude Desktop](https://docs.usepitboard.com/guides/claude-desktop)
 explains.
 
+For Antigravity CLI profiles, install the external [`agyw`](https://github.com/tranquocthong/agy-switcher)
+tool, then use its profiles through Pitboard:
+
+```sh
+npm install -g agyw
+agyw exec work       # first run signs in to create this profile
+agyw exec personal  # create another profile
+agyw list
+```
+
+`agyw` manages these profiles outside Pitboard. Its profile logins are kept in separate home
+directories as files, not in Pitboard's encrypted vault or the system keychain. In the macOS
+app, choose an Antigravity profile from Pitboard's menu bar icon. The **Accounts** window also
+lists Antigravity profiles beside Claude and Codex. **Switch** selects the profile for the next
+`agy` command without opening a terminal. Select a profile to show its
+quota, reset date and time, and refresh control in the inspector on the right. On first use,
+Pitboard adds a small managed function to `~/.zshrc` so `agy` launches through `agyw` using the
+selected profile. Run `source ~/.zshrc` in an existing zsh session, or open a new one, to load
+that function. Restart a running `agy` session in the same terminal after switching; it keeps its
+original profile until it exits.
+The app stores profile names and cached quota snapshots. Press **Refresh** to update a snapshot
+using Antigravity CLI's read-only `/usage` command. Optional auto-selection picks another cached
+profile when a refresh finds 5% or less remaining, for the next `agy` command.
+Removing a name from the app leaves the `agyw` profile and its login intact; use
+`agyw remove <name> --yes` to delete those. `agyw` supports macOS and Linux; the app integration
+is macOS-only. Neither manages Antigravity IDE or desktop logins.
+
 Add accounts only this way, never with Claude Code's `/login` or with `codex login`. Each
 replaces the login in use without Pitboard parking it. The account that was in use then needs
 a browser sign-in. Never choose **Log out** in Claude Desktop: it ends the login Claude holds

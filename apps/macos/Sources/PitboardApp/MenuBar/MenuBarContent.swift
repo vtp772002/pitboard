@@ -9,10 +9,17 @@ struct MenuBarContent: View {
     let updates: any Updates
     @Environment(\.openURL) private var openURL
     @Environment(\.openSettings) private var openSettings
+    @AppStorage(DefaultsKey.antigravityProfiles) private var antigravityProfiles = ""
+    @AppStorage(DefaultsKey.antigravityActiveProfile) private var antigravityActiveProfile = ""
+    @AppStorage(DefaultsKey.antigravityInspectorProfile) private
+        var antigravityInspectorProfile = ""
+    @AppStorage(DefaultsKey.settingsTab) private var settingsTab = SettingsView.Tab.general
+    @State private var antigravitySwitchError: String?
 
     var body: some View {
         attention
         accounts
+        antigravityAccounts
         Section {
             Button(words.menu.addAccount) {
                 model.send(.presentSheet(sheet: .add(tool: nil)))
@@ -117,6 +124,45 @@ struct MenuBarContent: View {
     private func items(of section: AccountSection) -> some View {
         ForEach(section.accounts, id: \.id) { item in
             AccountMenuItem(item: item) { model.send($0) }
+        }
+    }
+
+    @ViewBuilder private var antigravityAccounts: some View {
+        let profiles = antigravityProfiles.split(separator: "\n").map(String.init)
+        if !profiles.isEmpty || antigravitySwitchError != nil {
+            Section("Antigravity CLI") {
+                ForEach(profiles, id: \.self) { profile in
+                    Button {
+                        selectAntigravityProfile(profile)
+                    } label: {
+                        if antigravityActiveProfile == profile {
+                            Label(profile, systemImage: "checkmark")
+                        } else {
+                            Text(profile)
+                        }
+                    }
+                    .accessibilityIdentifier("menubar.antigravity.select.\(profile)")
+                }
+                if let antigravitySwitchError {
+                    Text(antigravitySwitchError)
+                }
+                Button("Manage Antigravity CLI profiles…") {
+                    windows.presence.activate()
+                    settingsTab = .antigravity
+                    openSettings()
+                }
+            }
+        }
+    }
+
+    private func selectAntigravityProfile(_ profile: String) {
+        do {
+            try AntigravityShellRouting.install()
+            antigravityActiveProfile = profile
+            antigravityInspectorProfile = profile
+            antigravitySwitchError = nil
+        } catch {
+            antigravitySwitchError = error.localizedDescription
         }
     }
 }
